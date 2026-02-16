@@ -20,3 +20,9 @@ class Strategy(Base):
     is_active = Column(Boolean, default=False)
 
     user = relationship("User", back_populates="strategies")
+from sqlalchemy.orm import relationship
+# ...
+class Strategy(Base):
+    __tablename__ = "strategies"
+    # Use the string "User" here
+    user = relationship("User", back_populates="strategies")
