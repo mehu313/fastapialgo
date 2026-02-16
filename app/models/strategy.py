@@ -1,7 +1,7 @@
+# app/models/strategy.py
 from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, Float
 from sqlalchemy.orm import relationship
 from app.database import Base
-
 
 class Strategy(Base):
     __tablename__ = "strategies"
@@ -9,7 +9,7 @@ class Strategy(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
 
-    strategy_name = Column(String)   # e.g. DUMMY, ORB
+    strategy_name = Column(String)   # e.g. DUMMY, ORB, bollinger, rsi
     symbol = Column(String)
     quantity = Column(Integer)
 
@@ -19,10 +19,5 @@ class Strategy(Base):
     is_running = Column(Boolean, default=False)
     is_active = Column(Boolean, default=False)
 
-    user = relationship("User", back_populates="strategies")
-from sqlalchemy.orm import relationship
-# ...
-class Strategy(Base):
-    __tablename__ = "strategies"
-    # Use the string "User" here
+    # Correct relationship definition
     user = relationship("User", back_populates="strategies")

@@ -1,29 +1,25 @@
+# app/routers/websocket.py
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
-from app.security.jwt import decode_access_token
 from app.websocket.manager import manager
 
+# 1. Define the router instance BEFORE using it in decorators
 router = APIRouter()
 
+# 2. Use the simplified logic for testing as we discussed
 @router.websocket("/ws/signals")
 async def websocket_endpoint(websocket: WebSocket):
-    # 1. Accept the connection immediately to satisfy the browser handshake
+    # Accept the handshake immediately
     await websocket.accept()
     
-    token = websocket.query_params.get("token")
-    payload = decode_access_token(token)
-    user_id = payload.get("user_id") if payload else None
+    # Get user_id from query params (simple version for now)
+    user_id = websocket.query_params.get("user_id", "1")
 
-    if not user_id:
-        # Close with policy violation code if unauthorized
-        await websocket.close(code=1008)
-        return
-
-    # 2. Register the user with your manager
+    # Register connection with the manager
     await manager.connect(int(user_id), websocket) 
     
     try:
         while True:
-            # Keep the loop alive to receive data or maintain the connection
+            # Keep connection alive
             await websocket.receive_text()
     except WebSocketDisconnect:
         manager.disconnect(int(user_id))
